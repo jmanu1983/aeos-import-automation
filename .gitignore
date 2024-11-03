@@ -1,0 +1,32 @@
+# Configuration (contains real server names and paths)
+config/accredites.config.json
+!config/accredites.config.json.example
+
+# Credentials (encrypted PowerShell CliXml)
+config/sql_cred.xml
+config/aeos_cred.xml
+secrets/
+*.cred
+*.cred.clixml
+
+# Data files
+*.csv
+!prestataires.csv.example
+
+# Binary / archive artifacts
+*.zip
+
+# Logs
+logs/
+*.log
+
+# Archives
+Archives/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# IDE
+.vscode/
+.idea/

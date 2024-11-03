@@ -1,0 +1,23 @@
+{
+    "FolderPathImport": "D:\\data\\transferts\\in",
+    "FolderPathOutput": "D:\\data\\transferts\\out",
+    "WorkingDir": "D:\\InterfaceAeosPrestataires",
+    "LogDir": "D:\\InterfaceAeosPrestataires\\Logs",
+    "InputFileName": "prestataires.csv",
+    "SqlServer": "your-sql-server",
+    "SqlDatabase": "aeosdb",
+    "SqlAuthMode": "SqlLogin",
+    "SqlUser": "your-sql-user",
+    "CredentialPath": "D:\\InterfaceAeosPrestataires\\config\\sql_cred.xml",
+    "StoredProcedureToApply": "dbo.PJ_PRESTATAIRES_IMPORT_LOAD",
+    "DelayBeforeMoveSeconds": 30,
+    "VendorImportDir": "D:\\AEOS\\data\\import\\vendor",
+    "VendorPlaceOfBusiness": "Geneva",
+    "VendorWaitTimeoutSeconds": 90,
+    "VendorPollEverySeconds": 0,
+    "VendorDefaultCategory": "P",
+    "EnableVendorSoap": true,
+    "SoapBaseUrl": "https://your-aeos-server:8443/aeosws",
+    "SoapCredentialPath": "D:\\InterfaceAeosPrestataires\\secrets\\aeos-soap.cred.clixml",
+    "SoapIgnoreCertErrors": false
+}
