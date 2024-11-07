@@ -1,6 +1,6 @@
 #requires -Version 5.1
 param(
-  [string]$ConfigPath = "D:\DemoInterfaceAccredites\config\accredites.config.json"
+  [string]$ConfigPath = ".\config\accredites.config.json"
 )
 
 try { [Console]::OutputEncoding = [Text.Encoding]::UTF8 } catch {}
@@ -11,7 +11,7 @@ $ErrorActionPreference = "Stop"
 # ======================
 # LOGGING (UTF-8, no BOM)
 # ======================
-$Global:LogFile = "D:\data\11345\transferts\out\logs\log_import_{0}.txt" -f (Get-Date -Format "yyyyMMdd")
+$Global:LogFile = ".\logs\log_import_{0}.txt" -f (Get-Date -Format "yyyyMMdd")
 $Global:LogWriter = $null
 function Initialize-Logger {
   if ($Global:LogWriter) { try { $Global:LogWriter.Flush(); $Global:LogWriter.Dispose() } catch {} ; $Global:LogWriter = $null }
