@@ -4,63 +4,63 @@
 ![SQL Server](https://img.shields.io/badge/SQL%20Server-Staging%20%2B%20SP-CC2927?logo=microsoftsqlserver&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
-A production-grade **PowerShell automation script** for importing accredited contractor personnel into the **Nedap AEOS** access control system. Handles CSV parsing, SQL Server staging, SOAP vendor management, and full audit logging.
+Script d'automatisation **PowerShell de production** pour l'import de personnel prestataire accrédité dans le système de contrôle d'accès **Nedap AEOS**. Gère le parsing CSV, le staging SQL Server, la gestion des vendors via SOAP, et un audit logging complet.
 
-## Features
+## Fonctionnalités
 
-- **Robust CSV Parsing** — Handles multiple encodings (UTF-8, Windows-1252, UTF-16), BOM detection, and mojibake repair
-- **Smart Header Mapping** — Auto-detects column positions regardless of header naming variations
-- **SQL Server Integration** — Schema introspection, BulkCopy staging, stored procedure execution
-- **SOAP Vendor Management** — Automatic vendor creation/update via AEOS web services with retry logic
-- **Vendor Lifecycle** — Unblocks vendors in DB, polls until vendors are synced
-- **Full Audit Trail** — Detailed logging with UPSERT/BLOCK tracking per person
-- **Secure Credentials** — Uses PowerShell CliXml encrypted credentials (Windows DPAPI)
-- **Configurable** — All settings externalized to a JSON config file
+- **Parsing CSV robuste** — Gestion multi-encodages (UTF-8, Windows-1252, UTF-16), détection BOM, réparation mojibake
+- **Mapping intelligent des en-têtes** — Détection automatique des colonnes quelle que soit la variante de nommage
+- **Intégration SQL Server** — Introspection de schéma, staging BulkCopy, exécution de procédure stockée
+- **Gestion SOAP des vendors** — Création/mise à jour automatique des vendors AEOS avec logique de retry
+- **Cycle de vie vendor** — Déblocage des vendors en base, polling de synchronisation
+- **Piste d'audit complète** — Logging détaillé avec suivi UPSERT/BLOCK par personne
+- **Identifiants sécurisés** — Utilisation de credentials chiffrés PowerShell CliXml (Windows DPAPI)
+- **Configurable** — Tous les paramètres externalisés dans un fichier JSON
 
 ## Architecture
 
 ```
-CSV File (prestataires.csv)
+Fichier CSV (prestataires.csv)
     │
     ▼
 ┌──────────────────────┐
-│  Parse & Validate    │  ← Encoding detection, header mapping
+│  Parsing & validation│  ← Détection d'encodage, mapping des en-têtes
 │  (PowerShell)        │
 └──────────┬───────────┘
            │
            ▼
 ┌──────────────────────┐
-│  SQL Server Staging  │  ← BulkCopy into PJ_PRESTATAIRES_IMPORT_STAGE
+│  Staging SQL Server  │  ← BulkCopy vers PJ_PRESTATAIRES_IMPORT_STAGE
 │  (SqlBulkCopy)       │
 └──────────┬───────────┘
            │
            ▼
 ┌──────────────────────┐
-│  Vendor SOAP Sync    │  ← Add/Change vendors via AEOS SOAP API
-│  (Optional)          │
+│  Synchro SOAP Vendor │  ← Ajout/modification vendors via API SOAP AEOS
+│  (Optionnel)         │
 └──────────┬───────────┘
            │
            ▼
 ┌──────────────────────┐
-│  Stored Procedure    │  ← dbo.sp_LoadAccreditesToImport
+│  Procédure stockée   │  ← dbo.sp_LoadAccreditesToImport
 │  (SQL Server)        │
 └──────────┬───────────┘
            │
            ▼
 ┌──────────────────────┐
-│  Archive & Audit     │  ← Move CSV, log UPSERT/BLOCK details
+│  Archivage & audit   │  ← Déplacement CSV, logging UPSERT/BLOCK
 └──────────────────────┘
 ```
 
-## Tech Stack
+## Stack technique
 
-| Component | Technology |
-|-----------|-----------|
-| Language | PowerShell 5.1+ |
-| Database | SQL Server (SqlClient) |
-| SOAP | Native HTTP (Invoke-WebRequest) |
-| Credentials | PowerShell CliXml (DPAPI encryption) |
-| Scheduling | Windows Task Scheduler |
+| Composant | Technologie |
+|-----------|------------|
+| Langage | PowerShell 5.1+ |
+| Base de données | SQL Server (SqlClient) |
+| SOAP | HTTP natif (Invoke-WebRequest) |
+| Identifiants | PowerShell CliXml (chiffrement DPAPI) |
+| Planification | Planificateur de tâches Windows |
 
 ## Installation
 
@@ -71,54 +71,54 @@ cd aeos-import-automation
 
 ## Configuration
 
-1. Copy the example configuration:
+1. Copier la configuration exemple :
    ```powershell
    Copy-Item config\accredites.config.json.example config\accredites.config.json
    ```
 
-2. Edit the config file with your environment settings (SQL Server, paths, SOAP URL).
+2. Modifier le fichier de config avec vos paramètres (SQL Server, chemins, URL SOAP).
 
-3. Create encrypted credential files:
+3. Créer les fichiers d'identifiants chiffrés :
    ```powershell
-   # SQL Server credentials
+   # Identifiants SQL Server
    Get-Credential | Export-Clixml -Path config\sql_cred.xml
 
-   # AEOS SOAP credentials
+   # Identifiants SOAP AEOS
    Get-Credential | Export-Clixml -Path secrets\aeos-soap.cred.clixml
    ```
 
-## Usage
+## Utilisation
 
 ```powershell
-# Run with default config path
+# Exécuter avec le chemin de config par défaut
 .\bin\01-Import-Accredites.ps1
 
-# Run with a custom config
-.\bin\01-Import-Accredites.ps1 -ConfigPath "D:\custom\config.json"
+# Exécuter avec une config personnalisée
+.\bin\01-Import-Accredites.ps1 -ConfigPath "D:\chemin\vers\config.json"
 ```
 
-### Scheduled Execution
+### Exécution planifiée
 
-Set up a Windows Task Scheduler job to run the script at regular intervals:
+Configurer une tâche dans le Planificateur de tâches Windows :
 
 ```powershell
-powershell.exe -ExecutionPolicy Bypass -File "D:\path\to\bin\01-Import-Accredites.ps1"
+powershell.exe -ExecutionPolicy Bypass -File "D:\chemin\vers\bin\01-Import-Accredites.ps1"
 ```
 
-## Project Structure
+## Structure du projet
 
 ```
 aeos-import-automation/
 ├── bin/
-│   └── 01-Import-Accredites.ps1    # Main import script
+│   └── 01-Import-Accredites.ps1    # Script d'import principal
 ├── config/
-│   ├── accredites.config.json.example  # Configuration template
-│   └── PJ_PRESTATAIRES_IMPORT_LOAD.sql # Stored procedure
-├── secrets/                         # Encrypted credentials (not in VCS)
-├── logs/                            # Runtime logs (not in VCS)
+│   ├── accredites.config.json.example  # Modèle de configuration
+│   └── PJ_PRESTATAIRES_IMPORT_LOAD.sql # Procédure stockée
+├── secrets/                         # Identifiants chiffrés (hors VCS)
+├── logs/                            # Logs d'exécution (hors VCS)
 └── README.md
 ```
 
-## License
+## Licence
 
-This project is licensed under the MIT License.
+Ce projet est sous licence MIT.
